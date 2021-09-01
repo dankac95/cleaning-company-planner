@@ -1,8 +1,12 @@
 package com.example.cleaningcompanyplanner.worker;
 
+import com.example.cleaningcompanyplanner.jpa.BaseEntity;
+
+import javax.persistence.Entity;
 import java.time.LocalDate;
 
-public class Worker {
+@Entity
+public class Worker extends BaseEntity {
 
     private String name;
     private String lastName;

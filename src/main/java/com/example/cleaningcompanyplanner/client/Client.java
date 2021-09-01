@@ -1,9 +1,12 @@
 package com.example.cleaningcompanyplanner.client;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
+import com.example.cleaningcompanyplanner.jpa.BaseEntity;
 
-public class Client {
+import javax.persistence.Entity;
+import java.math.BigDecimal;
+
+@Entity
+public class Client extends BaseEntity {
 
     private String name;
     private String city;

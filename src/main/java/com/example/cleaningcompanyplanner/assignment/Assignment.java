@@ -1,14 +1,24 @@
 package com.example.cleaningcompanyplanner.assignment;
 
 import com.example.cleaningcompanyplanner.client.Client;
+import com.example.cleaningcompanyplanner.jpa.BaseEntity;
 import com.example.cleaningcompanyplanner.worker.Worker;
 
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import java.time.LocalDate;
+import java.util.List;
 
-public class Assignment {
+@Entity
+public class Assignment extends BaseEntity {
 
     private LocalDate startDate;
     private LocalDate endDate;
+
+    @OneToOne
     private Client client;
-    private Worker worker;
+
+    @OneToMany
+    private List<Worker> worker;
 }

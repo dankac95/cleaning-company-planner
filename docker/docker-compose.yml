@@ -1,0 +1,15 @@
+version: '3.1'
+
+services:
+  db:
+    image: mysql:8.0
+    restart: always
+
+
+    environment:
+      MYSQL_DATABASE: cleaning_db
+      MYSQL_USER: daniel
+      MYSQL_PASSWORD: pass123
+      MYSQL_ROOT_PASSWORD: password
+    ports:
+      - "3306:3306"

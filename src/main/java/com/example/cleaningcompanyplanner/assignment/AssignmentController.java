@@ -14,7 +14,7 @@ public class AssignmentController {
 
     private final AssignmentService assignmentService;
 
-    @PostMapping
+    @PostMapping()
     public void createAssignment(@RequestBody Assignment assignment) {
         assignmentService.createAssignment(assignment);
     }
@@ -29,14 +29,19 @@ public class AssignmentController {
         return assignmentService.findAssignments(pageable);
     }
 
-    @PutMapping
-    public void updateAssignment(Assignment assignment) {
-        assignmentService.updateAssignment(assignment);
+    @PutMapping({"/{id}"})
+    public Assignment updateAssignment(@RequestBody Assignment assignment, @PathVariable int id) {
+
+        Assignment updatedAssignment = assignmentService.getAssignment(id).orElseThrow(() -> new AssignmentNotFoundException(id));
+        updatedAssignment.setStartDate(assignment.getStartDate());
+        updatedAssignment.setEndDate(assignment.getEndDate());
+        updatedAssignment.setClient(assignment.getClient());
+        updatedAssignment.setWorkers(assignment.getWorkers());
+        return assignmentService.updateAssignment(updatedAssignment);
     }
 
-    @DeleteMapping
-    public void deleteAssignment(@RequestParam int id) {
+    @DeleteMapping({"/{id}"})
+    public void deleteAssignment(@PathVariable int id) {
         assignmentService.deleteAssignment(id);
     }
-
 }

@@ -30,6 +30,8 @@ public class AssignmentService {
     }
 
     public void deleteAssignment(int id) {
-        assignmentRepository.deleteById(id);
+        Assignment assignment = assignmentRepository.findById(id).orElseThrow(() -> new AssignmentNotFoundException(id));
+        assignment.getWorkers().clear();
+        assignmentRepository.deleteById(assignment.getId());
     }
 }

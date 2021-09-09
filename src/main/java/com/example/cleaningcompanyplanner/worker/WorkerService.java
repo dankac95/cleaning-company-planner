@@ -14,7 +14,14 @@ public class WorkerService {
     private final WorkerRepository workerRepository;
 
     public Worker createWorker(Worker worker) {
+        checkDelegationAgreed(worker);
         return workerRepository.save(worker);
+    }
+
+    private void checkDelegationAgreed(Worker worker) {
+        if (!worker.isDelegation()) {
+            worker.setMaxDistanceFromCity(0);
+        }
     }
 
     public Optional<Worker> getWorkerById(int id) {
@@ -30,6 +37,7 @@ public class WorkerService {
     }
 
     public void deleteWorker(int id) {
-        workerRepository.deleteById(id);
+        Worker worker = workerRepository.findById(id).orElseThrow(() -> new WorkerNotFoundException(id));
+        workerRepository.deleteById(worker.getId());
     }
 }

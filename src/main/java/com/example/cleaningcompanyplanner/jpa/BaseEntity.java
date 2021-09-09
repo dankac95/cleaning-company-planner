@@ -1,8 +1,6 @@
 package com.example.cleaningcompanyplanner.jpa;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,5 +19,4 @@ public class BaseEntity {
     private int id;
 
     private String uuid = UUID.randomUUID().toString();
-
 }

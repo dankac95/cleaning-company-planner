@@ -21,7 +21,7 @@ public class ClientService {
         return clientRepository.findById(id);
     }
 
-    public Page<Client> findClient(Pageable pageable) {
+    public Page<Client> findClients(Pageable pageable) {
         return clientRepository.findAll(pageable);
     }
 
@@ -30,8 +30,7 @@ public class ClientService {
     }
 
     public void deleteClient(int id) {
-        clientRepository.deleteById(id);
+        Client client = clientRepository.findById(id).orElseThrow(() -> new ClientNotFoundException(id));
+        clientRepository.deleteById(client.getId());
     }
-
-
 }

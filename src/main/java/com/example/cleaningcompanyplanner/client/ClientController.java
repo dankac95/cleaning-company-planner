@@ -26,16 +26,22 @@ public class ClientController {
 
     @GetMapping
     public Page<Client> getClients(Pageable pageable) {
-        return clientService.findClient(pageable);
+        return clientService.findClients(pageable);
     }
 
-    @PutMapping
-    public void updateClient(@RequestBody Client client) {
-        clientService.updateClient(client);
+    @PutMapping({"/{id}"})
+    public Client updateClient(@RequestBody Client client, @PathVariable int id) {
+
+        Client updatedClient = clientService.getClientById(id).orElseThrow(() -> new ClientNotFoundException(id));
+        updatedClient.setName(client.getName());
+        updatedClient.setCity(client.getCity());
+        updatedClient.setArea(client.getArea());
+        updatedClient.setPricePerMeter(client.getPricePerMeter());
+        return clientService.updateClient(updatedClient);
     }
 
-    @DeleteMapping
-    public void deleteClient(@RequestParam int id) {
+    @DeleteMapping({"/{id}"})
+    public void deleteClient(@PathVariable int id) {
         clientService.deleteClient(id);
     }
 }

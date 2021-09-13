@@ -24,7 +24,7 @@ public class ClientController {
         return clientService.getClientById(id);
     }
 
-    @GetMapping
+    @GetMapping("/pagination")
     public Page<Client> getClients(Pageable pageable) {
         return clientService.findClients(pageable);
     }

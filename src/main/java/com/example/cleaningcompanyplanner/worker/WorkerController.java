@@ -24,7 +24,7 @@ public class WorkerController {
         return workerService.getWorkerById(id);
     }
 
-    @GetMapping
+    @GetMapping("/pagination")
     public Page<Worker> getWorkers(Pageable pageable) {
         return workerService.findWorkers(pageable);
     }

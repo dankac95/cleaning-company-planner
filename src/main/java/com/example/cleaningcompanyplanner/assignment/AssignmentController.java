@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 @RestController
@@ -14,8 +15,8 @@ public class AssignmentController {
 
     private final AssignmentService assignmentService;
 
-    @PostMapping()
-    public void createAssignment(@RequestBody Assignment assignment) {
+    @PostMapping
+    public void createAssignment(@Valid @RequestBody Assignment assignment) {
         assignmentService.createAssignment(assignment);
     }
 
@@ -24,7 +25,7 @@ public class AssignmentController {
         return assignmentService.getAssignment(id);
     }
 
-    @GetMapping
+    @GetMapping("/pagination")
     public Page<Assignment> getAssignments(Pageable pageable) {
         return assignmentService.findAssignments(pageable);
     }
@@ -38,6 +39,11 @@ public class AssignmentController {
         updatedAssignment.setClient(assignment.getClient());
         updatedAssignment.setWorkers(assignment.getWorkers());
         return assignmentService.updateAssignment(updatedAssignment);
+    }
+
+    @PutMapping("/{assignmentId}/worker/{workerId}")
+    public Assignment saveWorkersToAssignment(@PathVariable int assignmentId, @PathVariable int workerId) {
+        return assignmentService.saveWorkerToAssignment(assignmentId, workerId);
     }
 
     @DeleteMapping({"/{id}"})

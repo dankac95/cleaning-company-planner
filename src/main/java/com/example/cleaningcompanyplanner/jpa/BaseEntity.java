@@ -1,5 +1,6 @@
 package com.example.cleaningcompanyplanner.jpa;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -22,6 +23,6 @@ public class BaseEntity {
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private int id;
 
-    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    @JsonIgnore
     private String uuid = UUID.randomUUID().toString();
 }

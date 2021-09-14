@@ -32,8 +32,18 @@ public class WorkerService {
         return workerRepository.findAll(pageable);
     }
 
-    public Worker updateWorker(Worker worker) {
-        return workerRepository.save(worker);
+    public Worker updateWorker(Worker worker, int workerId) {
+        Worker updatedWorker = workerRepository.findById(workerId).orElseThrow(() -> new WorkerNotFoundException(workerId));
+        updatedWorker.setName(worker.getName());
+        updatedWorker.setLastName(worker.getLastName());
+        updatedWorker.setPesel(worker.getPesel());
+        updatedWorker.setEmploymentSince(worker.getEmploymentSince());
+        updatedWorker.setPhoneNumber(worker.getPhoneNumber());
+        updatedWorker.setEmail(worker.getEmail());
+        updatedWorker.setCity(worker.getCity());
+        updatedWorker.setDelegation(worker.isDelegation());
+        updatedWorker.setMaxDistanceFromCity(worker.getMaxDistanceFromCity());
+        return workerRepository.save(updatedWorker);
     }
 
     public void deleteWorker(int id) {

@@ -1,6 +1,7 @@
 package com.example.cleaningcompanyplanner.assignment;
 
 import com.example.cleaningcompanyplanner.client.Client;
+import com.example.cleaningcompanyplanner.client.ClientNotFoundException;
 import com.example.cleaningcompanyplanner.client.ClientService;
 import com.example.cleaningcompanyplanner.distance.DistanceController;
 import com.example.cleaningcompanyplanner.worker.Worker;
@@ -22,8 +23,10 @@ public class AssignmentService {
     private final WorkerService workerService;
     private final DistanceController distanceController;
 
-    public Assignment createAssignment(Assignment assignment) {
+    public Assignment createAssignment(Assignment assignment, int clientId) {
+        Client client = clientService.getClientById(clientId).orElseThrow(() -> new ClientNotFoundException(clientId));
         if (isEndDateIsAfterStartDate(assignment) == true) {
+            assignment.setClient(client);
             return assignmentRepository.save(assignment);
         }
         throw new AssignmentCannotCreateException("An assignment cannot end before it begins");
@@ -37,8 +40,13 @@ public class AssignmentService {
         return assignmentRepository.findAll(pageable);
     }
 
-    public Assignment updateAssignment(Assignment assignment) {
-        return assignmentRepository.save(assignment);
+    public Assignment updateAssignment(Assignment assignment, int assignmentId) {
+
+        Assignment updatedAssignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new AssignmentNotFoundException(assignmentId));
+        updatedAssignment.setStartDate(assignment.getStartDate());
+        updatedAssignment.setEndDate(assignment.getEndDate());
+        updatedAssignment.getWorkers().clear();
+        return assignmentRepository.save(updatedAssignment);
     }
 
     public Assignment saveWorkerToAssignment(int assignmentId, int workerId) {
@@ -53,7 +61,7 @@ public class AssignmentService {
         throw new AssignmentCannotCreateException("The conditions for save worker to the assignment are not met");
     }
 
-    public boolean conditionsWorkerToAssignment(int assignmentId, int workerId) {
+    private boolean conditionsWorkerToAssignment(int assignmentId, int workerId) {
 
         Worker worker = workerService.getWorkerById(workerId).orElseThrow(() -> new WorkerNotFoundException(workerId));
         Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new AssignmentNotFoundException(assignmentId));

@@ -31,13 +31,7 @@ public class ClientController {
 
     @PutMapping({"/{id}"})
     public Client updateClient(@RequestBody Client client, @PathVariable int id) {
-
-        Client updatedClient = clientService.getClientById(id).orElseThrow(() -> new ClientNotFoundException(id));
-        updatedClient.setName(client.getName());
-        updatedClient.setCity(client.getCity());
-        updatedClient.setArea(client.getArea());
-        updatedClient.setPricePerMeter(client.getPricePerMeter());
-        return clientService.updateClient(updatedClient);
+        return clientService.updateClient(client, id);
     }
 
     @DeleteMapping({"/{id}"})

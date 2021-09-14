@@ -9,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.PastOrPresent;
-import javax.validation.constraints.PositiveOrZero;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -56,6 +53,7 @@ public class Worker extends BaseEntity {
     private boolean delegation;
 
     @Column(nullable = false)
+    @Max(value = 999, message = "Max distance is 999 km from worker city")
     @PositiveOrZero(message = "Distance must be over 0")
     private double maxDistanceFromCity;
 

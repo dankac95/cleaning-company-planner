@@ -25,8 +25,13 @@ public class ClientService {
         return clientRepository.findAll(pageable);
     }
 
-    public Client updateClient(Client client) {
-        return clientRepository.save(client);
+    public Client updateClient(Client client, int clientId) {
+        Client updatedClient = clientRepository.findById(clientId).orElseThrow(() -> new ClientNotFoundException(clientId));
+        updatedClient.setName(client.getName());
+        updatedClient.setCity(client.getCity());
+        updatedClient.setArea(client.getArea());
+        updatedClient.setPricePerMeter(client.getPricePerMeter());
+        return clientRepository.save(updatedClient);
     }
 
     public void deleteClient(int id) {

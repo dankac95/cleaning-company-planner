@@ -15,9 +15,9 @@ public class AssignmentController {
 
     private final AssignmentService assignmentService;
 
-    @PostMapping
-    public void createAssignment(@Valid @RequestBody Assignment assignment) {
-        assignmentService.createAssignment(assignment);
+    @PostMapping("/client/{clientId}")
+    public void createAssignment(@Valid @RequestBody Assignment assignment, @PathVariable int clientId) {
+        assignmentService.createAssignment(assignment, clientId);
     }
 
     @GetMapping("/{id}")
@@ -32,13 +32,7 @@ public class AssignmentController {
 
     @PutMapping({"/{id}"})
     public Assignment updateAssignment(@RequestBody Assignment assignment, @PathVariable int id) {
-
-        Assignment updatedAssignment = assignmentService.getAssignment(id).orElseThrow(() -> new AssignmentNotFoundException(id));
-        updatedAssignment.setStartDate(assignment.getStartDate());
-        updatedAssignment.setEndDate(assignment.getEndDate());
-        updatedAssignment.setClient(assignment.getClient());
-        updatedAssignment.setWorkers(assignment.getWorkers());
-        return assignmentService.updateAssignment(updatedAssignment);
+        return assignmentService.updateAssignment(assignment, id);
     }
 
     @PutMapping("/{assignmentId}/worker/{workerId}")

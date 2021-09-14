@@ -31,18 +31,7 @@ public class WorkerController {
 
     @PutMapping({"/{id}"})
     public Worker updateWorker(@RequestBody Worker worker, @PathVariable int id) {
-
-        Worker updatedWorker = workerService.getWorkerById(id).orElseThrow(() -> new WorkerNotFoundException(id));
-        updatedWorker.setName(worker.getName());
-        updatedWorker.setLastName(worker.getLastName());
-        updatedWorker.setPesel(worker.getPesel());
-        updatedWorker.setEmploymentSince(worker.getEmploymentSince());
-        updatedWorker.setPhoneNumber(worker.getPhoneNumber());
-        updatedWorker.setEmail(worker.getEmail());
-        updatedWorker.setCity(worker.getCity());
-        updatedWorker.setDelegation(worker.isDelegation());
-        updatedWorker.setMaxDistanceFromCity(worker.getMaxDistanceFromCity());
-        return workerService.updateWorker(updatedWorker);
+        return workerService.updateWorker(worker, id);
     }
 
     @DeleteMapping({"/{id}"})

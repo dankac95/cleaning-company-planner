@@ -3,6 +3,11 @@ package com.example.cleaningcompanyplanner.assignment;
 import com.example.cleaningcompanyplanner.client.Client;
 import com.example.cleaningcompanyplanner.jpa.BaseEntity;
 import com.example.cleaningcompanyplanner.worker.Worker;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +41,7 @@ public class Assignment extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "client_id")
-    @NotNull
+    @Hidden
     private Client client;
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)

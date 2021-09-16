@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.stylesheets.LinkStyle;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,11 +27,15 @@ public class WorkerService {
     }
 
     public Optional<Worker> getWorkerById(int id) {
-        return workerRepository.findById(id);
+        return Optional.ofNullable(workerRepository.findById(id).orElseThrow(() -> new WorkerNotFoundException(id)));
     }
 
     public Page<Worker> findWorkers(Pageable pageable) {
         return workerRepository.findAll(pageable);
+    }
+
+    public List<Worker> getWorkerList() {
+        return workerRepository.findAll();
     }
 
     public Worker updateWorker(Worker worker, int workerId) {

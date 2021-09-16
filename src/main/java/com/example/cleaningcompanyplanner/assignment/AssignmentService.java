@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,11 +34,15 @@ public class AssignmentService {
     }
 
     public Optional<Assignment> getAssignment(int id) {
-        return assignmentRepository.findById(id);
+        return Optional.ofNullable(assignmentRepository.findById(id).orElseThrow(() -> new AssignmentNotFoundException(id)));
     }
 
     public Page<Assignment> findAssignments(Pageable pageable) {
         return assignmentRepository.findAll(pageable);
+    }
+
+    public List<Assignment> getAllAssignments() {
+        return assignmentRepository.findAll();
     }
 
     public Assignment updateAssignment(Assignment assignment, int assignmentId) {

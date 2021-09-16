@@ -1,10 +1,13 @@
 package com.example.cleaningcompanyplanner.worker;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -15,6 +18,7 @@ public class WorkerController {
     private final WorkerService workerService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public void createWorker(@RequestBody Worker worker) {
         workerService.createWorker(worker);
     }
@@ -25,8 +29,13 @@ public class WorkerController {
     }
 
     @GetMapping("/pagination")
-    public Page<Worker> getWorkers(Pageable pageable) {
+    public Page<Worker> getWorkers(@Parameter(hidden = true) Pageable pageable, @RequestParam("page") int page) {
         return workerService.findWorkers(pageable);
+    }
+
+    @GetMapping
+    public List<Worker> findAllWorkers() {
+        return workerService.getWorkerList();
     }
 
     @PutMapping({"/{id}"})
@@ -35,6 +44,7 @@ public class WorkerController {
     }
 
     @DeleteMapping({"/{id}"})
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteWorker(@PathVariable int id) {
         workerService.deleteWorker(id);
     }

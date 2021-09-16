@@ -1,10 +1,15 @@
 package com.example.cleaningcompanyplanner.client;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -15,6 +20,7 @@ public class ClientController {
     private final ClientService clientService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public void createClient(@RequestBody Client client) {
         clientService.createClient(client);
     }
@@ -25,8 +31,13 @@ public class ClientController {
     }
 
     @GetMapping("/pagination")
-    public Page<Client> getClients(Pageable pageable) {
+    public Page<Client> getClients(@Parameter(hidden = true) Pageable pageable, @RequestParam("page") int page) {
         return clientService.findClients(pageable);
+    }
+
+    @GetMapping
+    public List<Client> findAllClients() {
+        return clientService.getClientList();
     }
 
     @PutMapping({"/{id}"})
@@ -35,6 +46,7 @@ public class ClientController {
     }
 
     @DeleteMapping({"/{id}"})
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteClient(@PathVariable int id) {
         clientService.deleteClient(id);
     }

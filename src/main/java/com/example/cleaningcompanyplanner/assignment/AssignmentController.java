@@ -1,11 +1,14 @@
 package com.example.cleaningcompanyplanner.assignment;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -16,6 +19,7 @@ public class AssignmentController {
     private final AssignmentService assignmentService;
 
     @PostMapping("/client/{clientId}")
+    @ResponseStatus(HttpStatus.CREATED)
     public void createAssignment(@Valid @RequestBody Assignment assignment, @PathVariable int clientId) {
         assignmentService.createAssignment(assignment, clientId);
     }
@@ -26,8 +30,13 @@ public class AssignmentController {
     }
 
     @GetMapping("/pagination")
-    public Page<Assignment> getAssignments(Pageable pageable) {
+    public Page<Assignment> getAssignments(@Parameter(hidden = true) Pageable pageable, @RequestParam("page") int page) {
         return assignmentService.findAssignments(pageable);
+    }
+
+    @GetMapping
+    public List<Assignment> findAllAssignments() {
+        return assignmentService.getAllAssignments();
     }
 
     @PutMapping({"/{id}"})
@@ -41,6 +50,7 @@ public class AssignmentController {
     }
 
     @DeleteMapping({"/{id}"})
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAssignment(@PathVariable int id) {
         assignmentService.deleteAssignment(id);
     }

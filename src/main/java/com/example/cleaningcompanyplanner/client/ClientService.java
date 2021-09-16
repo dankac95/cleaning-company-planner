@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,7 +19,11 @@ public class ClientService {
     }
 
     public Optional<Client> getClientById(int id) {
-        return clientRepository.findById(id);
+        return Optional.ofNullable(clientRepository.findById(id).orElseThrow(() -> new ClientNotFoundException(id)));
+    }
+
+    public List<Client> getClientList() {
+        return clientRepository.findAll();
     }
 
     public Page<Client> findClients(Pageable pageable) {

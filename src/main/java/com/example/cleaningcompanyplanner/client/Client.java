@@ -43,4 +43,11 @@ public class Client extends BaseEntity {
     @JsonIgnore
     @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private List<Assignment> assignments;
+
+    public Client(String name, String city, double area, BigDecimal pricePerMeter) {
+        this.name = name;
+        this.city = city;
+        this.area = area;
+        this.pricePerMeter = pricePerMeter;
+    }
 }

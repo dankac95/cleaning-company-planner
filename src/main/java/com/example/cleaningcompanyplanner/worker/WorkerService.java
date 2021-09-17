@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.stylesheets.LinkStyle;
 
 import java.util.List;
 import java.util.Optional;
@@ -49,6 +48,9 @@ public class WorkerService {
         updatedWorker.setCity(worker.getCity());
         updatedWorker.setDelegation(worker.isDelegation());
         updatedWorker.setMaxDistanceFromCity(worker.getMaxDistanceFromCity());
+        if (!updatedWorker.isDelegation()) {
+            updatedWorker.setMaxDistanceFromCity(0);
+        }
         return workerRepository.save(updatedWorker);
     }
 

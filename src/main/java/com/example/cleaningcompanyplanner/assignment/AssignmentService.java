@@ -82,7 +82,7 @@ public class AssignmentService {
                 && maxWorkersNeededForAssignment >= assignment.getWorkers().size() + 1) {
             return true;
         }
-        throw new AssignmentCannotCreateException("Requirements do not allow this assignment");
+        throw new AssignmentCannotCreateException("Requirements do not allow this assignment. Max space for 1 worker is 200m2");
     }
 
     public void deleteAssignment(int id) {
@@ -123,6 +123,10 @@ public class AssignmentService {
             }
             if (newAssignmentForWorker.getStartDate().isAfter(assignment.getStartDate()) &&
                     newAssignmentForWorker.getStartDate().isBefore(assignment.getEndDate())) {
+                return true;
+            }
+            if (newAssignmentForWorker.getStartDate().isEqual(assignment.getStartDate()) &&
+                    newAssignmentForWorker.getEndDate().equals(assignment.getEndDate())) {
                 return true;
             }
         }

@@ -1,7 +1,5 @@
 package com.example.cleaningcompanyplanner.client;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,8 +19,8 @@ public class ClientController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createClient(@RequestBody Client client) {
-        clientService.createClient(client);
+    public Client createClient(@RequestBody Client client) {
+        return clientService.createClient(client);
     }
 
     @GetMapping("/{id}")
@@ -35,7 +33,7 @@ public class ClientController {
         return clientService.findClients(pageable);
     }
 
-    @GetMapping
+    @GetMapping("/list")
     public List<Client> findAllClients() {
         return clientService.getClientList();
     }

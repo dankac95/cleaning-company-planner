@@ -20,8 +20,8 @@ public class AssignmentController {
 
     @PostMapping("/client/{clientId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createAssignment(@Valid @RequestBody Assignment assignment, @PathVariable int clientId) {
-        assignmentService.createAssignment(assignment, clientId);
+    public Assignment createAssignment(@Valid @RequestBody Assignment assignment, @PathVariable int clientId) {
+        return assignmentService.createAssignment(assignment, clientId);
     }
 
     @GetMapping("/{id}")
@@ -34,7 +34,7 @@ public class AssignmentController {
         return assignmentService.findAssignments(pageable);
     }
 
-    @GetMapping
+    @GetMapping("/list")
     public List<Assignment> findAllAssignments() {
         return assignmentService.getAllAssignments();
     }

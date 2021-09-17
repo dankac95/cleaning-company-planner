@@ -19,8 +19,8 @@ public class WorkerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createWorker(@RequestBody Worker worker) {
-        workerService.createWorker(worker);
+    public Worker createWorker(@RequestBody Worker worker) {
+        return workerService.createWorker(worker);
     }
 
     @GetMapping("/{id}")
@@ -33,7 +33,7 @@ public class WorkerController {
         return workerService.findWorkers(pageable);
     }
 
-    @GetMapping
+    @GetMapping("/list")
     public List<Worker> findAllWorkers() {
         return workerService.getWorkerList();
     }

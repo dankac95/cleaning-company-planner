@@ -2,6 +2,7 @@ package com.example.cleaningcompanyplanner.jpa;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.GeneratedValue;
@@ -12,13 +13,14 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @MappedSuperclass
 @EqualsAndHashCode(of = "uuid")
 public class BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     // TODO-purban: 1. JsonIgnore bylby OK ale na DTO, gdzie masz warstwe DTO?
     //  Nie powinno zwracac encji z controllerow VVV

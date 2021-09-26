@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/client")
@@ -18,9 +20,10 @@ public class ClientController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ClientDto createClient(@RequestBody ClientDto clientDto) {
+    public ClientDto createClient(@Valid @RequestBody ClientDto clientDto) {
         Client client = objectsMapper.dtoClientToClient(clientDto);
-        return objectsMapper.clientToDtoClient(clientService.createClient(client));
+        Client createdClient = clientService.createClient(client);
+        return objectsMapper.clientToDtoClient(createdClient);
     }
 
     @GetMapping("/{uuid}")
@@ -35,7 +38,7 @@ public class ClientController {
     }
 
     @PutMapping({"/{uuid}"})
-    public void updateClient(@RequestBody ClientDto clientDto, @PathVariable String uuid) {
+    public void updateClient(@Valid @RequestBody ClientDto clientDto, @PathVariable String uuid) {
         Client client = objectsMapper.dtoClientToClient(clientDto);
         clientService.updateClient(client, uuid);
     }

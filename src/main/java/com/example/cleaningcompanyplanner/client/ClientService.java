@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class ClientService {
@@ -12,6 +14,7 @@ public class ClientService {
     private final ClientRepository clientRepository;
 
     public Client createClient(Client client) {
+        client.setUuid(UUID.randomUUID().toString());
         return clientRepository.save(client);
     }
 

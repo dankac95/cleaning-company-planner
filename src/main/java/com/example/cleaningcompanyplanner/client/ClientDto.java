@@ -3,8 +3,7 @@ package com.example.cleaningcompanyplanner.client;
 import com.example.cleaningcompanyplanner.assignment.Assignment;
 import com.example.cleaningcompanyplanner.jpa.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
@@ -13,7 +12,12 @@ import java.util.List;
 
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ClientDto {
+
+    private String uuid;
 
     @Size(min = 2, message = "name too short")
     private String clientName;

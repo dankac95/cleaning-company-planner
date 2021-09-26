@@ -1,19 +1,14 @@
 package com.example.cleaningcompanyplanner.assignment;
 
 import com.example.cleaningcompanyplanner.client.Client;
-import com.example.cleaningcompanyplanner.client.ClientNotFoundException;
 import com.example.cleaningcompanyplanner.client.ClientService;
-import com.example.cleaningcompanyplanner.distance.DistanceController;
+import com.example.cleaningcompanyplanner.distance.DistanceCalculator;
 import com.example.cleaningcompanyplanner.worker.Worker;
-import com.example.cleaningcompanyplanner.worker.WorkerNotFoundException;
 import com.example.cleaningcompanyplanner.worker.WorkerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,10 +17,10 @@ public class AssignmentService {
     private final AssignmentRepository assignmentRepository;
     private final ClientService clientService;
     private final WorkerService workerService;
-    private final DistanceController distanceController;
+    private final DistanceCalculator distanceCalculator;
 
-    public Assignment createAssignment(Assignment assignment, int clientId) {
-        Client client = clientService.getClientById(clientId).orElseThrow(() -> new ClientNotFoundException(clientId));
+    public Assignment createAssignment(Assignment assignment, String clientUuid) {
+        Client client = clientService.getClientByUuid(clientUuid);
         if (isEndDateIsAfterStartDate(assignment) == true) {
             assignment.setClient(client);
             return assignmentRepository.save(assignment);
@@ -33,49 +28,45 @@ public class AssignmentService {
         throw new AssignmentCannotCreateException("An assignment cannot end before it begins");
     }
 
-    public Optional<Assignment> getAssignment(int id) {
-        return Optional.ofNullable(assignmentRepository.findById(id).orElseThrow(() -> new AssignmentNotFoundException(id)));
+    public Assignment getAssignmentByUuid(String uuid) {
+        return findAssignmentByUuid(uuid);
     }
 
     public Page<Assignment> findAssignments(Pageable pageable) {
         return assignmentRepository.findAll(pageable);
     }
 
-    public List<Assignment> getAllAssignments() {
-        return assignmentRepository.findAll();
-    }
+    public Assignment updateAssignment(Assignment assignment, String uuid) {
 
-    public Assignment updateAssignment(Assignment assignment, int assignmentId) {
-
-        Assignment updatedAssignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new AssignmentNotFoundException(assignmentId));
+        Assignment updatedAssignment = findAssignmentByUuid(uuid);
         updatedAssignment.setStartDate(assignment.getStartDate());
         updatedAssignment.setEndDate(assignment.getEndDate());
         updatedAssignment.getWorkers().clear();
         return assignmentRepository.save(updatedAssignment);
     }
 
-    public Assignment saveWorkerToAssignment(int assignmentId, int workerId) {
+    public Assignment saveWorkerToAssignment(String assignmentUuid, String workerUuid) {
 
-        Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new AssignmentNotFoundException(assignmentId));
-        Worker worker = workerService.getWorkerById(workerId).orElseThrow(() -> new WorkerNotFoundException(workerId));
+        Assignment assignment = findAssignmentByUuid(assignmentUuid);
+        Worker worker = workerService.getWorkerByUuid(workerUuid);
 
-        if (conditionsWorkerToAssignment(assignmentId, workerId)) {
+        if (conditionsWorkerToAssignment(assignmentUuid, workerUuid)) {
             assignment.getWorkers().add(worker);
             return assignmentRepository.save(assignment);
         }
         throw new AssignmentCannotCreateException("The conditions for save worker to the assignment are not met");
     }
 
-    private boolean conditionsWorkerToAssignment(int assignmentId, int workerId) {
+    private boolean conditionsWorkerToAssignment(String assignmentUuid, String workerUuid) {
 
-        Worker worker = workerService.getWorkerById(workerId).orElseThrow(() -> new WorkerNotFoundException(workerId));
-        Assignment assignment = assignmentRepository.findById(assignmentId).orElseThrow(() -> new AssignmentNotFoundException(assignmentId));
+        Worker worker = workerService.getWorkerByUuid(workerUuid);
+        Assignment assignment = findAssignmentByUuid(assignmentUuid);
 
         String joinedCities = getJoinedCities(assignment.getClient(), worker);
         int maxWorkersNeededForAssignment = countWorkersNeededForAssignment(assignment.getClient());
-        double distanceBetweenCities = distanceController.calculateDistanceBetweenCities(joinedCities);
+        double distanceBetweenCities = distanceCalculator.calculateDistanceBetweenCities(joinedCities);
 
-        if (areAssignmentsOverlapping(assignmentId, workerId) == true) {
+        if (areAssignmentsOverlapping(assignmentUuid, workerUuid) == true) {
             throw new AssignmentCannotCreateException("This worker already has assignment in these dates");
         }
         if (worker.getMaxDistanceFromCity() >= distanceBetweenCities
@@ -85,8 +76,8 @@ public class AssignmentService {
         throw new AssignmentCannotCreateException("Requirements do not allow this assignment. Max space for 1 worker is 200m2");
     }
 
-    public void deleteAssignment(int id) {
-        Assignment assignment = assignmentRepository.findById(id).orElseThrow(() -> new AssignmentNotFoundException(id));
+    public void deleteAssignment(String uuid) {
+        Assignment assignment = findAssignmentByUuid(uuid);
         assignment.getWorkers().clear();
         assignmentRepository.deleteById(assignment.getId());
     }
@@ -112,9 +103,9 @@ public class AssignmentService {
         return workers;
     }
 
-    private boolean areAssignmentsOverlapping(int assignmentId, int workerId) {
-        Assignment newAssignmentForWorker = assignmentRepository.findById(assignmentId).orElseThrow(() -> new AssignmentNotFoundException(assignmentId));
-        Worker worker = workerService.getWorkerById(workerId).orElseThrow(() -> new WorkerNotFoundException(workerId));
+    private boolean areAssignmentsOverlapping(String assignmentUuid, String workerUuid) {
+        Assignment newAssignmentForWorker = findAssignmentByUuid(assignmentUuid);
+        Worker worker = workerService.getWorkerByUuid(workerUuid);
 
         for (Assignment assignment : worker.getAssignments()) {
             if (newAssignmentForWorker.getEndDate().isAfter(assignment.getStartDate()) &&
@@ -138,6 +129,14 @@ public class AssignmentService {
             return true;
         }
         return false;
+    }
+
+    private Assignment findAssignmentByUuid(String uuid) {
+        return assignmentRepository.findAll()
+                .stream()
+                .filter(assignment -> assignment.getUuid().equals(uuid))
+                .findFirst()
+                .orElseThrow(() -> new AssignmentNotFoundException(uuid));
     }
 }
 

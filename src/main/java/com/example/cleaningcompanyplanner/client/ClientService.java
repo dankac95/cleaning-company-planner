@@ -5,9 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class ClientService {
@@ -18,20 +15,17 @@ public class ClientService {
         return clientRepository.save(client);
     }
 
-    public Optional<Client> getClientById(int id) {
-        return Optional.ofNullable(clientRepository.findById(id).orElseThrow(() -> new ClientNotFoundException(id)));
-    }
-
-    public List<Client> getClientList() {
-        return clientRepository.findAll();
+    public Client getClientByUuid(String uuid) {
+        return findClientByUuid(uuid);
     }
 
     public Page<Client> findClients(Pageable pageable) {
         return clientRepository.findAll(pageable);
     }
 
-    public Client updateClient(Client client, int clientId) {
-        Client updatedClient = clientRepository.findById(clientId).orElseThrow(() -> new ClientNotFoundException(clientId));
+    public Client updateClient(Client client, String uuid) {
+        Client updatedClient = findClientByUuid(uuid);
+
         updatedClient.setName(client.getName());
         updatedClient.setCity(client.getCity());
         updatedClient.setArea(client.getArea());
@@ -39,8 +33,16 @@ public class ClientService {
         return clientRepository.save(updatedClient);
     }
 
-    public void deleteClient(int id) {
-        Client client = clientRepository.findById(id).orElseThrow(() -> new ClientNotFoundException(id));
+    public void deleteClient(String uuid) {
+        Client client = findClientByUuid(uuid);
         clientRepository.deleteById(client.getId());
+    }
+
+    private Client findClientByUuid(String uuid) {
+        return clientRepository.findAll()
+                .stream()
+                .filter(client1 -> client1.getUuid().equals(uuid))
+                .findFirst()
+                .orElseThrow(() -> new ClientNotFoundException(uuid));
     }
 }

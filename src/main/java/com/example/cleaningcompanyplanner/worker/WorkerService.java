@@ -1,12 +1,11 @@
 package com.example.cleaningcompanyplanner.worker;
 
+import com.example.cleaningcompanyplanner.client.Client;
+import com.example.cleaningcompanyplanner.client.ClientNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,20 +24,17 @@ public class WorkerService {
         }
     }
 
-    public Optional<Worker> getWorkerById(int id) {
-        return Optional.ofNullable(workerRepository.findById(id).orElseThrow(() -> new WorkerNotFoundException(id)));
+    public Worker getWorkerByUuid(String uuid) {
+        return findWorkerByUuid(uuid);
     }
 
     public Page<Worker> findWorkers(Pageable pageable) {
         return workerRepository.findAll(pageable);
     }
 
-    public List<Worker> getWorkerList() {
-        return workerRepository.findAll();
-    }
+    public Worker updateWorker(Worker worker, String uuid) {
+        Worker updatedWorker = findWorkerByUuid(uuid);
 
-    public Worker updateWorker(Worker worker, int workerId) {
-        Worker updatedWorker = workerRepository.findById(workerId).orElseThrow(() -> new WorkerNotFoundException(workerId));
         updatedWorker.setName(worker.getName());
         updatedWorker.setLastName(worker.getLastName());
         updatedWorker.setPesel(worker.getPesel());
@@ -54,8 +50,16 @@ public class WorkerService {
         return workerRepository.save(updatedWorker);
     }
 
-    public void deleteWorker(int id) {
-        Worker worker = workerRepository.findById(id).orElseThrow(() -> new WorkerNotFoundException(id));
+    public void deleteWorker(String uuid) {
+        Worker worker = findWorkerByUuid(uuid);
         workerRepository.deleteById(worker.getId());
+    }
+
+    private Worker findWorkerByUuid(String uuid) {
+        return workerRepository.findAll()
+                .stream()
+                .filter(worker -> worker.getUuid().equals(uuid))
+                .findFirst()
+                .orElseThrow(() -> new WorkerNotFoundException(uuid));
     }
 }

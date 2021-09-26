@@ -7,13 +7,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.hibernate.Hibernate;
 
-import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -23,40 +23,22 @@ import java.util.Set;
 @Table(name = "worker")
 public class Worker extends BaseEntity {
 
-    @Column(nullable = false)
-    @Size(min = 2, message = " name too short")
     private String name;
 
-    @Column(nullable = false)
-    @Size(min = 2, message = "last name too short")
     private String lastName;
 
-    @Column(nullable = false)
-    @Size(min = 11, max = 11, message = "Pesel has 11 numbers")
     private String pesel;
 
-    @Column(nullable = false)
-    @PastOrPresent
     private LocalDate employmentSince;
 
-    @Column(nullable = false)
-    @Size(min = 9, max = 12)
     private String phoneNumber;
 
-    @Column(nullable = false)
-    @Email
     private String email;
 
-    @Column(nullable = false)
-    @Size(min = 2, message = "Too short word")
     private String city;
 
-    @Column(nullable = false)
     private boolean delegation;
 
-    @Column(nullable = false)
-    @Max(value = 999, message = "Max distance is 999 km from worker city")
-    @PositiveOrZero(message = "Distance must be over 0")
     private double maxDistanceFromCity;
 
     @ManyToMany(mappedBy = "workers", cascade = CascadeType.REMOVE)

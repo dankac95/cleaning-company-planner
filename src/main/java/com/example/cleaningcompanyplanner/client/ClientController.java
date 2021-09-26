@@ -1,14 +1,11 @@
 package com.example.cleaningcompanyplanner.client;
 
-import io.swagger.v3.oas.annotations.Parameter;
+import com.example.cleaningcompanyplanner.mapstruct.ObjectsMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,35 +14,35 @@ public class ClientController {
 
     private final ClientService clientService;
 
+    private final ObjectsMapper objectsMapper;
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Client createClient(@RequestBody Client client) {
-        return clientService.createClient(client);
+    public ClientDto createClient(@RequestBody ClientDto clientDto) {
+        Client client = objectsMapper.dtoClientToClient(clientDto);
+        return objectsMapper.clientToDtoClient(clientService.createClient(client));
     }
 
-    @GetMapping("/{id}")
-    public Optional<Client> getClientById(@PathVariable int id) {
-        return clientService.getClientById(id);
+    @GetMapping("/{uuid}")
+    public ClientDto getClientById(@PathVariable String uuid) {
+        return objectsMapper.clientToDtoClient(clientService.getClientByUuid(uuid));
     }
 
-    @GetMapping("/pagination")
-    public Page<Client> getClients(@Parameter(hidden = true) Pageable pageable, @RequestParam("page") int page) {
-        return clientService.findClients(pageable);
+    // TODO-purban: Zostawisaz tylko endpoint z Pageable, wywalasz /list, @GetMapping dla pageable bez zadnego adresu VVV
+    @GetMapping
+    public Page<ClientDto> getClients(Pageable pageable) {
+        return clientService.findClients(pageable).map(objectsMapper::clientToDtoClient);
     }
 
-    @GetMapping("/list")
-    public List<Client> findAllClients() {
-        return clientService.getClientList();
+    @PutMapping({"/{uuid}"})
+    public void updateClient(@RequestBody ClientDto clientDto, @PathVariable String uuid) {
+        Client client = objectsMapper.dtoClientToClient(clientDto);
+        clientService.updateClient(client, uuid);
     }
 
-    @PutMapping({"/{id}"})
-    public Client updateClient(@RequestBody Client client, @PathVariable int id) {
-        return clientService.updateClient(client, id);
-    }
-
-    @DeleteMapping({"/{id}"})
+    @DeleteMapping({"/{uuid}"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteClient(@PathVariable int id) {
-        clientService.deleteClient(id);
+    public void deleteClient(@PathVariable String uuid) {
+        clientService.deleteClient(uuid);
     }
 }

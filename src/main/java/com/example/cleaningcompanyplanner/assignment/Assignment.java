@@ -11,8 +11,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
-import javax.validation.constraints.Future;
-import javax.validation.constraints.FutureOrPresent;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,13 +23,8 @@ import java.util.Set;
 @ToString(exclude = "client")
 public class Assignment extends BaseEntity {
 
-    @Column(nullable = false)
-    @FutureOrPresent(message = "Start date cannot be in the past")
-
     private LocalDate startDate;
 
-    @Column(nullable = false)
-    @Future(message = "End date must be in future")
     private LocalDate endDate;
 
     @ManyToOne

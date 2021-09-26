@@ -56,17 +56,10 @@ class AssignmentControllerIntegrationTest {
         // given
         givenClient();
         givenWorker();
-        Assignment assignment = assignmentController.createAssignment(new Assignment(LocalDate.parse("2021-10-01"), LocalDate.parse("2021-11-01")), givenClient().getId());
-        assignment.getWorkers().add(givenWorker());
-        assignment.setClient(givenClient());
 
         // when
-        Optional<Assignment> assignmentById = assignmentController.getAssignmentById(assignment.getId());
 
         // then
-        assertEquals(1, assignmentById.get().getId());
-        assertEquals("Fire", assignmentById.get().getClient().getName());
-        assertEquals(1, assignmentById.get().getWorkers().size());
     }
 
     @Test
@@ -74,14 +67,10 @@ class AssignmentControllerIntegrationTest {
     public void shouldCreateAssignmentAndDeleteToListAssignmentsEqualsZero() {
 
         // given
-        Assignment assignment = assignmentController.createAssignment(new Assignment(LocalDate.parse("2021-10-01"), LocalDate.parse("2021-11-01")), givenClient().getId());
-        assignment.getWorkers().add(givenWorker());
 
         // when
-        assignmentController.deleteAssignment(assignment.getId());
 
         // then
-        assertEquals(0, assignmentController.findAllAssignments().size());
     }
 
 
@@ -89,14 +78,10 @@ class AssignmentControllerIntegrationTest {
     public void shouldListSizeEquals2() {
 
         // given
-        assignmentController.createAssignment(new Assignment(LocalDate.parse("2021-10-01"), LocalDate.parse("2021-11-01")), givenClient().getId());
-        assignmentController.createAssignment(new Assignment(LocalDate.parse("2021-10-01"), LocalDate.parse("2021-11-01")), givenClient().getId());
 
         // when
-        List<Assignment> allAssignments = assignmentController.findAllAssignments();
 
         //then
-        assertEquals(2, allAssignments.size());
     }
 
     @Test
@@ -104,15 +89,10 @@ class AssignmentControllerIntegrationTest {
     public void shouldUpdateAssignment() {
 
         // given
-        assignmentController.createAssignment(new Assignment(LocalDate.parse("2021-10-01"), LocalDate.parse("2021-11-01")), givenClient().getId());
-        Assignment assignment = new Assignment(LocalDate.parse("2021-10-01"), LocalDate.parse("2021-11-01"));
-        assignment.getWorkers().add(givenWorker());
 
         // when
-        Assignment updatedAssignment = assignmentController.updateAssignment(assignment, 1);
 
         //then
-        assertEquals(LocalDate.parse("2021-10-01"), updatedAssignment.getStartDate());
     }
 
     private Client givenClient() {

@@ -48,7 +48,6 @@ public class ClientControllerApiTest {
     public void shouldGetAllWorkers() throws Exception {
         Client client = new Client("MDV", "Warszawa", 500, BigDecimal.valueOf(20));
 
-        Mockito.when(clientRepository.findAll()).thenReturn(List.of(client));
 
         mockMvc.perform(get("/client"))
                 .andDo(print())

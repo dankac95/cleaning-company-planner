@@ -2,7 +2,7 @@ package com.example.cleaningcompanyplanner.worker;
 
 import com.example.cleaningcompanyplanner.assignment.AssignmentController;
 import com.example.cleaningcompanyplanner.client.ClientController;
-import com.example.cleaningcompanyplanner.distance.RetrofitClient;
+import com.example.cleaningcompanyplanner.distance.DistanceClientConfiguration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -34,7 +34,7 @@ class WorkerControllerApiTest {
     ClientController clientController;
 
     @MockBean
-    RetrofitClient retrofitClient;
+    DistanceClientConfiguration distanceClientConfiguration;
 
     @MockBean
     WorkerController workerController;
@@ -62,7 +62,6 @@ class WorkerControllerApiTest {
         Worker worker = new Worker("Daniel", "Kacprzak", "90010517555",
                 LocalDate.parse("2020-05-01"), "508808595", "kaczpak@gmail.com", "Gdynia", true, 20);
 
-        Mockito.when(workerRepository.findAll()).thenReturn(List.of(worker));
 
         mockMvc.perform(get("/worker"))
                 .andDo(print())

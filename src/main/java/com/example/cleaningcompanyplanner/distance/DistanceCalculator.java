@@ -1,23 +1,19 @@
 package com.example.cleaningcompanyplanner.distance;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.event.EventListener;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Component;
 import retrofit2.Response;
 
 import java.io.IOException;
 
 @RequiredArgsConstructor
-@RestController
-public class DistanceController {
+@Component // TODO-purban: Rename + zmiana adnotacji na np. Component VVV
+public class DistanceCalculator {
 
-    private final RetrofitClient retrofitClient;
+    private final DistanceClientConfiguration distanceClientConfiguration;
 
-
-    @EventListener()
     public double calculateDistanceBetweenCities(String cities) {
-
-        Distance distance = getDistance((cities));
+        Distance distance = getDistance(cities);
         return distance.getDistance();
     }
 
@@ -34,6 +30,6 @@ public class DistanceController {
     }
 
     private DistanceClient getDistanceClientImpl() {
-        return retrofitClient.getRetrofitClient().create(DistanceClient.class);
+        return distanceClientConfiguration.getRetrofitClient();
     }
 }

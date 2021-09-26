@@ -1,6 +1,6 @@
 package com.example.cleaningcompanyplanner.assignment;
 
-import io.swagger.v3.oas.annotations.Parameter;
+import com.example.cleaningcompanyplanner.mapstruct.ObjectsMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,8 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,40 +16,40 @@ public class AssignmentController {
 
     private final AssignmentService assignmentService;
 
-    @PostMapping("/client/{clientId}")
+    private final ObjectsMapper objectsMapper;
+
+    @PostMapping("/client/{clientUuid}")
     @ResponseStatus(HttpStatus.CREATED)
-    public Assignment createAssignment(@Valid @RequestBody Assignment assignment, @PathVariable int clientId) {
-        return assignmentService.createAssignment(assignment, clientId);
+    public AssignmentDto createAssignment(@Valid @RequestBody AssignmentDto assignmentDto, @PathVariable String clientUuid) {
+        Assignment assignment = objectsMapper.dtoAssignmentToAssignment(assignmentDto);
+        return objectsMapper.assignmentToDtoAssignment(assignmentService.createAssignment(assignment, clientUuid));
     }
 
-    @GetMapping("/{id}")
-    public Optional<Assignment> getAssignmentById(@PathVariable int id) {
-        return assignmentService.getAssignment(id);
+    @GetMapping("/{uuid}")
+    public AssignmentDto getAssignmentById(@PathVariable String uuid) {
+        return objectsMapper.assignmentToDtoAssignment(assignmentService.getAssignmentByUuid(uuid));
     }
 
-    @GetMapping("/pagination")
-    public Page<Assignment> getAssignments(@Parameter(hidden = true) Pageable pageable, @RequestParam("page") int page) {
-        return assignmentService.findAssignments(pageable);
+    @GetMapping
+    public Page<AssignmentDto> getAssignments(Pageable pageable) {
+        return assignmentService.findAssignments(pageable).map(objectsMapper::assignmentToDtoAssignment);
     }
 
-    @GetMapping("/list")
-    public List<Assignment> findAllAssignments() {
-        return assignmentService.getAllAssignments();
+    @PutMapping({"/{uuid}"})
+    public void updateAssignment(@RequestBody AssignmentDto assignmentDto, @PathVariable String uuid) {
+        Assignment assignment = objectsMapper.dtoAssignmentToAssignment(assignmentDto);
+        assignmentService.updateAssignment(assignment, uuid);
     }
 
-    @PutMapping({"/{id}"})
-    public Assignment updateAssignment(@RequestBody Assignment assignment, @PathVariable int id) {
-        return assignmentService.updateAssignment(assignment, id);
+    @PutMapping("/{assignmentUuid}/worker/{workerUuid}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void saveWorkersToAssignment(@PathVariable String assignmentUuid, @PathVariable String workerUuid) {
+        assignmentService.saveWorkerToAssignment(assignmentUuid, workerUuid);
     }
 
-    @PutMapping("/{assignmentId}/worker/{workerId}")
-    public Assignment saveWorkersToAssignment(@PathVariable int assignmentId, @PathVariable int workerId) {
-        return assignmentService.saveWorkerToAssignment(assignmentId, workerId);
-    }
-
-    @DeleteMapping({"/{id}"})
+    @DeleteMapping({"/{uuid}"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteAssignment(@PathVariable int id) {
-        assignmentService.deleteAssignment(id);
+    public void deleteAssignment(@PathVariable String uuid) {
+        assignmentService.deleteAssignment(uuid);
     }
 }

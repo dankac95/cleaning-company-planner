@@ -10,10 +10,10 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class DistanceControllerTest {
+class DistanceCalculatorTest {
 
     @Autowired
-    DistanceController distanceController;
+    DistanceCalculator distanceCalculator;
 
     @Test
     public void shouldCalculateDistanceCorrect() {
@@ -22,7 +22,7 @@ class DistanceControllerTest {
         String city = "Warszawa|Pruszków";
 
         // when
-        double distanceBetweenCities = distanceController.calculateDistanceBetweenCities(city);
+        double distanceBetweenCities = distanceCalculator.calculateDistanceBetweenCities(city);
 
         // then
         assertEquals(15, distanceBetweenCities);
@@ -35,7 +35,7 @@ class DistanceControllerTest {
         String city = "Warszawa|Berlin";
 
         // when
-        double distanceBetweenCities = distanceController.calculateDistanceBetweenCities(city);
+        double distanceBetweenCities = distanceCalculator.calculateDistanceBetweenCities(city);
 
         // then
         assertNotEquals(20, distanceBetweenCities);

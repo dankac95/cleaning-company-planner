@@ -1,7 +1,5 @@
 package com.example.cleaningcompanyplanner.client;
 
-import com.example.cleaningcompanyplanner.test.PageableResponse;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +13,6 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -55,7 +52,6 @@ public class ClientControllerIT {
                 .andExpect(jsonPath("$.city", equalTo(clientToCreate.getCity())))
                 .andExpect(jsonPath("$.area", equalTo(clientToCreate.getArea())))
                 .andExpect(jsonPath("$.pricePerMeter", equalTo(clientToCreate.getPricePerMeter().doubleValue())));
-
     }
 
     // Po zalozeniu klienta robimy getList (z sortowaniem id,DESC) i zakladamy ze dodany client jest na poczatku listy
@@ -75,12 +71,9 @@ public class ClientControllerIT {
                 .andReturn().getResponse().getContentAsString();
         ClientDto createdClient = objectMapper.readValue(responseString, ClientDto.class);
 
-        String firstClient = mockMvc.perform(get("/client?size=1&sort=id,DESC"))
-                .andReturn().getResponse().getContentAsString();
-        PageableResponse<ClientDto> firstClientOnList = objectMapper.readValue(firstClient,
-                new TypeReference<PageableResponse<ClientDto>>() {});
-
-        assertEquals(createdClient.getUuid(), firstClientOnList.getContent().get(0).getUuid());
+        mockMvc.perform(get("/client?size=1&sort=id,DESC"))
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].uuid", equalTo(createdClient.getUuid())));
     }
 
     // Nie moge zalozyc klienta ze wzgledu na bledy walidacji (celowy bledny request + weryfikacja response)
@@ -132,7 +125,6 @@ public class ClientControllerIT {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(clientToCreate)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.uuid", notNullValue()))
                 .andReturn().getResponse().getContentAsString();
         ClientDto createdClient = objectMapper.readValue(responseString, ClientDto.class);
 
@@ -170,7 +162,6 @@ public class ClientControllerIT {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(clientToCreate)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.uuid", notNullValue()))
                 .andReturn().getResponse().getContentAsString();
         ClientDto createdClient = objectMapper.readValue(responseString, ClientDto.class);
 
@@ -220,6 +211,7 @@ public class ClientControllerIT {
         ClientDto createdClient = objectMapper.readValue(responseString, ClientDto.class);
 
         mockMvc.perform(delete("/client/" + createdClient.getUuid()));
+
         mockMvc.perform(get("/client/" + createdClient.getUuid()))
                 .andExpect(status().isNotFound());
     }
@@ -227,23 +219,8 @@ public class ClientControllerIT {
     // Usuniecie - bledne ID
     @Test
     public void shouldReturnInfoAboutInvalidIdAfterDelete() throws Exception {
-        ClientDto clientToCreate = ClientDto.builder()
-                .clientName("TestClient")
-                .city("Gdynia")
-                .area(100.5)
-                .pricePerMeter(BigDecimal.valueOf(200))
-                .build();
-
-        String responseString = mockMvc.perform(post("/client")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(clientToCreate)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.uuid", notNullValue()))
-                .andReturn().getResponse().getContentAsString();
-        ClientDto createdClient = objectMapper.readValue(responseString, ClientDto.class);
-
-        mockMvc.perform(delete("/client/" + createdClient.getUuid()))
-                .andExpect(status().isNoContent());
+        mockMvc.perform(delete("/client/" + UUID.randomUUID()))
+                .andExpect(status().isNotFound());
     }
 
 

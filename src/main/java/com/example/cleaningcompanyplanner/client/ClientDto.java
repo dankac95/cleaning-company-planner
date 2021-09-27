@@ -25,7 +25,7 @@ public class ClientDto {
     @Size(min = 2, message = "city word too short")
     private String city;
 
-    @Positive
+    @Positive(message = "value can not be negative")
     private double area;
 
     @Positive

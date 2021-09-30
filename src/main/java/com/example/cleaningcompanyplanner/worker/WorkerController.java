@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/worker")
@@ -18,7 +20,7 @@ public class WorkerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public WorkerDto createWorker(@RequestBody WorkerDto workerDto) {
+    public WorkerDto createWorker(@Valid @RequestBody WorkerDto workerDto) {
         Worker worker = objectsMapper.dtoWorkerToWorker(workerDto);
         return objectsMapper.workerToDtoWorker(workerService.createWorker(worker));
     }
@@ -35,7 +37,7 @@ public class WorkerController {
     }
 
     @PutMapping({"/{uuid}"})
-    public void updateWorker(@RequestBody WorkerDto workerDto, @PathVariable String uuid) {
+    public void updateWorker(@Valid @RequestBody WorkerDto workerDto, @PathVariable String uuid) {
         Worker worker = objectsMapper.dtoWorkerToWorker(workerDto);
          workerService.updateWorker(worker, uuid);
     }

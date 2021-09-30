@@ -2,8 +2,7 @@ package com.example.cleaningcompanyplanner.worker;
 
 import com.example.cleaningcompanyplanner.assignment.Assignment;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
@@ -12,6 +11,9 @@ import java.util.Set;
 
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class WorkerDto {
 
     private String uuid;
@@ -25,13 +27,13 @@ public class WorkerDto {
     @Size(min = 11, max = 11, message = "Pesel has 11 numbers")
     private String pesel;
 
-    @PastOrPresent
+    @PastOrPresent(message = "cannot be enployment before present")
     private LocalDate employmentSince;
 
-    @Size(min = 9, max = 12)
+    @Size(min = 9, max = 12, message = "phone has 9-12 digits")
     private String phoneNumber;
 
-    @Email
+    @Email(message = "Email is incorrect")
     private String email;
 
     @Size(min = 2, message = "Too short word")

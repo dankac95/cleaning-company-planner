@@ -27,5 +27,6 @@ public interface ObjectsMapper {
 
     Assignment dtoAssignmentToAssignment(AssignmentDto assignmentDto);
 
+    @Mapping(source = "uuid", target = "uuid")
     AssignmentDto assignmentToDtoAssignment(Assignment assignment);
 }

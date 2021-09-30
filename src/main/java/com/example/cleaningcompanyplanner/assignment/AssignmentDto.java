@@ -4,8 +4,7 @@ import com.example.cleaningcompanyplanner.client.Client;
 import com.example.cleaningcompanyplanner.worker.Worker;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.Future;
@@ -14,10 +13,14 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-@Component
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class AssignmentDto {
+
+    private String uuid;
 
     @FutureOrPresent(message = "Start date cannot be in the past")
     private LocalDate startDate;

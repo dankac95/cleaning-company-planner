@@ -222,6 +222,4 @@ public class ClientControllerIT {
         mockMvc.perform(delete("/client/" + UUID.randomUUID()))
                 .andExpect(status().isNotFound());
     }
-
-
 }

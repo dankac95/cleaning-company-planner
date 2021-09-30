@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class WorkerService {
@@ -14,6 +16,7 @@ public class WorkerService {
     private final WorkerRepository workerRepository;
 
     public Worker createWorker(Worker worker) {
+        worker.setUuid(UUID.randomUUID().toString());
         checkDelegationAgreed(worker);
         return workerRepository.save(worker);
     }

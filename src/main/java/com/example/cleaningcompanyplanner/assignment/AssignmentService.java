@@ -10,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class AssignmentService {
@@ -21,7 +23,8 @@ public class AssignmentService {
 
     public Assignment createAssignment(Assignment assignment, String clientUuid) {
         Client client = clientService.getClientByUuid(clientUuid);
-        if (isEndDateIsAfterStartDate(assignment) == true) {
+        if (isEndDateIsAfterStartDate(assignment)) {
+            assignment.setUuid(UUID.randomUUID().toString());
             assignment.setClient(client);
             return assignmentRepository.save(assignment);
         }

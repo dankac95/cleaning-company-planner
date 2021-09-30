@@ -1,5 +1,6 @@
 package com.example.cleaningcompanyplanner.assignment;
 
+import com.example.cleaningcompanyplanner.client.Client;
 import com.example.cleaningcompanyplanner.mapstruct.ObjectsMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,7 +23,8 @@ public class AssignmentController {
     @ResponseStatus(HttpStatus.CREATED)
     public AssignmentDto createAssignment(@Valid @RequestBody AssignmentDto assignmentDto, @PathVariable String clientUuid) {
         Assignment assignment = objectsMapper.dtoAssignmentToAssignment(assignmentDto);
-        return objectsMapper.assignmentToDtoAssignment(assignmentService.createAssignment(assignment, clientUuid));
+        Assignment createdAssignment = assignmentService.createAssignment(assignment,clientUuid);
+        return objectsMapper.assignmentToDtoAssignment(createdAssignment);
     }
 
     @GetMapping("/{uuid}")
@@ -36,14 +38,14 @@ public class AssignmentController {
     }
 
     @PutMapping({"/{uuid}"})
-    public void updateAssignment(@RequestBody AssignmentDto assignmentDto, @PathVariable String uuid) {
+    public void updateAssignment(@Valid @RequestBody AssignmentDto assignmentDto, @PathVariable String uuid) {
         Assignment assignment = objectsMapper.dtoAssignmentToAssignment(assignmentDto);
         assignmentService.updateAssignment(assignment, uuid);
     }
 
     @PutMapping("/{assignmentUuid}/worker/{workerUuid}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void saveWorkersToAssignment(@PathVariable String assignmentUuid, @PathVariable String workerUuid) {
+    public void saveWorkersToAssignment(@Valid @PathVariable String assignmentUuid, @PathVariable String workerUuid) {
         assignmentService.saveWorkerToAssignment(assignmentUuid, workerUuid);
     }
 
